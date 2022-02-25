@@ -5,12 +5,13 @@ nextflow.enable.dsl=2
 params.input = ""
 params.adapterfile = " "
 params.adapterpreset = " "
+params.output_dir = "results"
 
 qflags = "-q TAIL -qf i1.8 -qt 30 --qtrim-post-removal"
 
 
 process runFlexBar {
-  publishDir "flexbar_trimmed", mode: "copy"
+  publishDir "${params.output_dir}/flexbar_trimmed", mode: "copy"
   
   input:
   path read
