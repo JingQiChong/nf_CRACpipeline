@@ -5,9 +5,10 @@ nextflow.enable.dsl=2
 params.input = " "
 params.barcode = " "
 params.mismatches = 1
+params.output_dir = "results"
 
 process demultiplexSamples {
-  publishDir "demultiplexed", mode: "copy"
+  publishDir "${params.output_dir}/demultiplexed", mode: "copy"
 
   input:
   path read
