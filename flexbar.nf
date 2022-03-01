@@ -9,12 +9,11 @@ params.output_dir = "results"
 
 qflags = "-q TAIL -qf i1.8 -qt 30 --qtrim-post-removal"
 
-
 process runFlexBar {
   publishDir "${params.output_dir}/flexbar_trimmed", mode: "copy"
   
   input:
-  path read
+  tuple val(readID), file(readFile)
   
   output:
   path "*_trimmed.fastq"
@@ -22,26 +21,26 @@ process runFlexBar {
   script:
   if( params.adapterfile != " ") {
     """
-    flexbar -r ${read} --output-reads ${read}_trimmed.fastq -n 10 ${qflags} -ao 5 --adapters ${params.adapterfile} 
+    flexbar -r ${readFile} --output-reads ${readID}_trimmed.fastq -n 10 ${qflags} -ao 5 --adapters ${params.adapterfile} 
     """
   }
   
   else if( params.adapterpreset != " ") {
     """
-    flexbar -r ${read} --output-reads ${read}_trimmed.fastq -n 10 ${qflags} -ao 5 --aa ${params.adapterpreset}
+    flexbar -r ${readFile} --output-reads ${readID}_trimmed.fastq -n 10 ${qflags} -ao 5 --aa ${params.adapterpreset}
     """
   }
   
   else {
     """
-    flexbar -r ${read} --output-reads ${read}_trimmed.fastq -n 10 ${qflags} -ao 5
+    flexbar -r ${readFile} --output-reads ${readID}_trimmed.fastq -n 10 ${qflags} -ao 5
     """
   }
 }
 
 
 workflow {
-  read_ch = channel.fromPath(params.input, checkIfExists: true )
+  read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
   runFlexBar(read_ch)
   runFlexBar.out.view()
 }
