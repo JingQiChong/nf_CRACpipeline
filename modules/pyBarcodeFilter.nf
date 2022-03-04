@@ -14,7 +14,8 @@ process demultiplexSamples {
   path read
 
   output:
-  path "*.*"
+  path "*.fastq", emit: demultiplexed_reads
+  path "*.txt", emit: stats_text
 
   script:
   """
@@ -25,5 +26,5 @@ process demultiplexSamples {
 workflow {
   read_ch = channel.fromPath(params.input, checkIfExists: true )
   demultiplexSamples(read_ch)
-  demultiplexSamples.out.view()
+  demultiplexSamples.out.demultiplexed_reads.view()
 }
