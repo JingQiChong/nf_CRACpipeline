@@ -1,0 +1,4 @@
+.nextflow*
+results/
+work/
+ssd1/
