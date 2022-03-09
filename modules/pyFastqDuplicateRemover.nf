@@ -22,7 +22,7 @@ process collapseDuplicates {
 
 workflow {
   demultiplexed_reads = channel.fromPath(params.input, checkIfExists: true ).flatMap(file -> file).view()
-//  collapseDuplicates(demultiplexed_reads)
-//  collapseDuplicates.out.view()
+  collapseDuplicates(demultiplexed_reads)
+  collapseDuplicates.out.view()
 }
   
