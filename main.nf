@@ -7,6 +7,10 @@ include { DemultiplexSamples } from './subworkflows/DemultiplexSamples'
 include { RunFastQC } from './subworkflows/RunFastQC'
 include { CollapseDuplicates } from './subworkflows/CollapseDuplicates'
 include { RunAligner } from './subworkflows/RunAligner'
+include { RunBamQC } from './subworkflows/RunBamQC'
+include { SortBamfiles } from './subworkflows/SortBamfiles'
+include { IndexBamfiles } from './subworkflows/IndexBamfiles'
+include { MakeGenomeCoverageBedgraph } from './subworkflows/MakeGenomeCoverageBedgraph'
 
 //parameters
 params.input = ""
@@ -23,8 +27,12 @@ workflow {
      RunFlexBar(read_ch)
      DemultiplexSamples(RunFlexBar.out)
      RunFastQC(DemultiplexSamples.out)
-     demultiplexed_reads_fastq = DemultiplexSamples.out.flatMap(file -> file).map(file -> tuple(file.baseName, file))
+     demultiplexed_reads_fastq = DemultiplexSamples.out.flatten().map(file -> tuple(file.baseName, file)) 
      CollapseDuplicates(demultiplexed_reads_fastq)
      RunAligner(CollapseDuplicates.out.map(file -> tuple(file.baseName, file)))
-     RunAligner.out.view()
+     RunBamQC(RunAligner.out)
+     SortBamfiles(RunAligner.out.map(file -> tuple(file.baseName, file)))
+     IndexBamfiles(SortBamfiles.out)
+     MakeGenomeCoverageBedgraph(SortBamfiles.out.map(file -> tuple(file.baseName, file)))
+     MakeGenomeCoverageBedgraph.out.view()
 }
