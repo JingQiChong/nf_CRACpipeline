@@ -11,6 +11,7 @@ include { RunBamQC } from './subworkflows/RunBamQC'
 include { SortBamfiles } from './subworkflows/SortBamfiles'
 include { IndexBamfiles } from './subworkflows/IndexBamfiles'
 include { MakeGenomeCoverageBedgraph } from './subworkflows/MakeGenomeCoverageBedgraph'
+include { RunMultiCovTranscript } from './subworkflows/RunMultiCovTranscript'
 
 //parameters
 params.input = ""
@@ -19,6 +20,7 @@ params.adapterpreset = " "
 params.barcode = " "
 params.mismatches = 1
 params.novoindex = " "
+params.transcriptgff = " "
 params.output_dir = "results"
 read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
 
@@ -30,9 +32,12 @@ workflow {
      demultiplexed_reads_fastq = DemultiplexSamples.out.flatten().map(file -> tuple(file.baseName, file)) 
      CollapseDuplicates(demultiplexed_reads_fastq)
      RunAligner(CollapseDuplicates.out.map(file -> tuple(file.baseName, file)))
-     RunBamQC(RunAligner.out)
+     RunBamQC(RunAligner.out.collect())
      SortBamfiles(RunAligner.out.map(file -> tuple(file.baseName, file)))
      IndexBamfiles(SortBamfiles.out)
      MakeGenomeCoverageBedgraph(SortBamfiles.out.map(file -> tuple(file.baseName, file)))
-     MakeGenomeCoverageBedgraph.out.view()
+     sortedbamfiles = SortBamfiles.out.collect()
+     bamfilesindex = IndexBamfiles.out.collect()
+     RunMultiCovTranscript(sortedbamfiles, bamfilesindex)
+     RunMultiCovTranscript.out.view()
 }
