@@ -12,6 +12,8 @@ include { SortBamfiles } from './subworkflows/SortBamfiles'
 include { IndexBamfiles } from './subworkflows/IndexBamfiles'
 include { MakeGenomeCoverageBedgraph } from './subworkflows/MakeGenomeCoverageBedgraph'
 include { RunMultiCovTranscript } from './subworkflows/RunMultiCovTranscript'
+include { RunPyReadCounters } from './subworkflows/RunPyReadCounters'
+include { RunPyReadCountersBlocksNoMuts } from './subworkflows/RunPyReadCountersBlocksNoMuts'
 
 //parameters
 params.input = ""
@@ -21,6 +23,7 @@ params.barcode = " "
 params.mismatches = 1
 params.novoindex = " "
 params.transcriptgff = " "
+params.gtf = " "
 params.output_dir = "results"
 read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
 
@@ -39,5 +42,6 @@ workflow {
      sortedbamfiles = SortBamfiles.out.collect()
      bamfilesindex = IndexBamfiles.out.collect()
      RunMultiCovTranscript(sortedbamfiles, bamfilesindex)
-     RunMultiCovTranscript.out.view()
+     RunPyReadCounters(RunAligner.out.map(file -> tuple(file.baseName, file)))
+     RunPyReadCountersBlocksNoMuts(RunAligner.out.map(file -> tuple(file.baseName, file))) 
 }
