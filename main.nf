@@ -14,6 +14,9 @@ include { MakeGenomeCoverageBedgraph } from './subworkflows/MakeGenomeCoverageBe
 include { RunMultiCovTranscript } from './subworkflows/RunMultiCovTranscript'
 include { RunPyReadCounters } from './subworkflows/RunPyReadCounters'
 include { RunPyReadCountersBlocksNoMuts } from './subworkflows/RunPyReadCountersBlocksNoMuts'
+include { MakeCoverageBedgraphFiles  } from './subworkflows/MakeCoverageBedgraphFiles'
+include { RunPyPileup } from './subworkflows/RunPyPileup'
+include { RunPyCalculateFDRs } from './subworkflows/RunPyCalculateFDRs'
 
 //parameters
 params.input = ""
@@ -24,11 +27,15 @@ params.mismatches = 1
 params.novoindex = " "
 params.transcriptgff = " "
 params.gtf = " "
+params.chromosome = " "
+params.genometab = " "
+params.genelist = " "
 params.output_dir = "results"
 read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
 
 //main workflow
 workflow {
+//   runs Flexbar on the data to remove the adapter sequence from the forward reads
      RunFlexBar(read_ch)
      DemultiplexSamples(RunFlexBar.out)
      RunFastQC(DemultiplexSamples.out)
@@ -43,5 +50,10 @@ workflow {
      bamfilesindex = IndexBamfiles.out.collect()
      RunMultiCovTranscript(sortedbamfiles, bamfilesindex)
      RunPyReadCounters(RunAligner.out.map(file -> tuple(file.baseName, file)))
-     RunPyReadCountersBlocksNoMuts(RunAligner.out.map(file -> tuple(file.baseName, file))) 
+     RunPyReadCountersBlocksNoMuts(RunAligner.out.map(file -> tuple(file.baseName, file)))
+     InputID = RunPyReadCountersBlocksNoMuts.out.map(file -> file.baseName).map({ it.replaceAll("_count_output_cDNAs","") })
+     MakeCoverageBedgraphFiles(RunPyReadCountersBlocksNoMuts.out, InputID)
+     RunPyPileup(RunAligner.out.map(file -> tuple(file.baseName, file)))
+     count_reads_gtfID = RunPyReadCounters.out.map(file -> file.baseName).map({ it.replaceAll("_count_output_reads","") })
+     RunPyCalculateFDRs(RunPyReadCounters.out, count_reads_gtfID)
 }
