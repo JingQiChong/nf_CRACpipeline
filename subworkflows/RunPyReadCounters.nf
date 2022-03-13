@@ -12,5 +12,5 @@ workflow RunPyReadCounters {
     runPyReadCounters(aligned_read)
   
   emit:
-    runPyReadCounters.out
+    runPyReadCounters.out.gtf
 }

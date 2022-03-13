@@ -13,7 +13,8 @@ process runPyReadCounters {
   tuple val(alignedreadID), file(alignedreadFile)
   
   output:
-  path "*.*"
+  path "*.gtf", emit: gtf
+  path "*.txt", emit: text
   
   script:
   """
