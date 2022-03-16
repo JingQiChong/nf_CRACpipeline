@@ -8,6 +8,7 @@ params.output_dir = "results"
 
 process runPyReadCountersBlocksNoMuts {
   publishDir "${params.output_dir}/pyReadCountersBlocksNoMuts_analyses", mode: "copy"
+  tag "${alignedreadFile}"
   
   input:
   tuple val(alignedreadID), file(alignedreadFile)

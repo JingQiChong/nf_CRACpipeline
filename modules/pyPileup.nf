@@ -10,6 +10,7 @@ params.output_dir = "results"
 
 process runPyPileup {
   publishDir "${params.output_dir}/pyPileup_analyses", mode: "copy"
+  tag "${alignedreadFile}"
   
   input:
   tuple val(alignedreadID), file(alignedreadFile)

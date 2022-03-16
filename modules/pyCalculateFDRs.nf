@@ -9,6 +9,7 @@ params.output_dir = "results"
 
 process runPyCalculateFDRs {
   publishDir "${params.output_dir}/pyCalculateFDRs_analyses", mode: "copy"
+  tag "${count_readsFile}"
   
   input:
   path count_readsFile

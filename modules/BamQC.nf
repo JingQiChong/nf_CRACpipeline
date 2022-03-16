@@ -2,7 +2,8 @@
 nextflow.enable.dsl=2
 
 process runBamQC {
- publishDir "${params.output_dir}/aligned_bamqc", mode: "copy"
+  publishDir "${params.output_dir}/aligned_bamqc", mode: "copy"
+  tag "${aligned_reads}"
   
   input:
   path aligned_reads

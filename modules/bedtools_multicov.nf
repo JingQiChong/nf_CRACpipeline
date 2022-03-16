@@ -9,6 +9,7 @@ params.output_dir = "results"
 
 process runMultiCovTranscript {
   publishDir "${params.output_dir}/multicov_analyses", mode: "copy"
+  tag "${sortedbamfile}"
   
   input:
   path sortedbamfile

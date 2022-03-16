@@ -8,6 +8,7 @@ params.output_dir = "results"
 
 process makeCoverageBedgraphFiles {
   publishDir "${params.output_dir}/bedgraph_files", mode: "copy"
+  tag "${inputFile}"
   
   input:
   path inputFile

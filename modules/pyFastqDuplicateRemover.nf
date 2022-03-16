@@ -7,6 +7,7 @@ params.output_dir = "results"
   
 process collapseDuplicates {
   publishDir "${params.output_dir}/collapsed", mode: "copy"
+  tag "${readFile}"
   
   input:
   tuple val(readID), file(readFile)

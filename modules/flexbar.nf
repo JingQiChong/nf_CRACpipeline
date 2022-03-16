@@ -11,6 +11,7 @@ qflags = "-q TAIL -qf i1.8 -qt 30 --qtrim-post-removal"
 
 process runFlexBar {
   publishDir "${params.output_dir}/flexbar_trimmed", mode: "copy"
+  tag "${readFile}"
   
   input:
   tuple val(readID), file(readFile)

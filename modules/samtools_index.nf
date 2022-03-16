@@ -7,6 +7,7 @@ params.output_dir = "results"
 
 process indexBamfiles {
   publishDir "${params.output_dir}/aligned_bamsorted", mode: "copy"
+  tag "${bamsorted}"
   
   input:
   path bamsorted

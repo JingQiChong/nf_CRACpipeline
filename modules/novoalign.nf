@@ -8,6 +8,7 @@ params.novoindex = " "
 
 process alignReads {
   publishDir "${params.output_dir}/aligned_sam", mode: "copy"
+  tag "${collapsed_readsFile}"
   
   input:
   tuple val(collapsed_readsID), file(collapsed_readsFile)

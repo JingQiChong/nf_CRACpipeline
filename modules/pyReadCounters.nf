@@ -8,6 +8,7 @@ params.output_dir = "results"
 
 process runPyReadCounters {
   publishDir "${params.output_dir}/pyReadCounters_analyses", mode: "copy"
+  tag "${alignedreadFile}"
   
   input:
   tuple val(alignedreadID), file(alignedreadFile)

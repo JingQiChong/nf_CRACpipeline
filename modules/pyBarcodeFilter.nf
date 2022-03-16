@@ -9,6 +9,7 @@ params.output_dir = "results"
 
 process demultiplexSamples {
   publishDir "${params.output_dir}/demultiplexed", mode: "copy"
+  tag "${read}"
 
   input:
   path read

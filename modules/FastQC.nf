@@ -7,6 +7,7 @@ params.output_dir = "results"
 
 process runFastQC {
   publishDir "${params.output_dir}/demultiplexed_fastqc", mode: "copy"
+  tag "${demultiplexed_reads}"
   
   input:
   path demultiplexed_reads

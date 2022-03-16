@@ -7,6 +7,7 @@ params.output_dir = "results"
 
 process makeGenomeCoverageBedgraph {
   publishDir "${params.output_dir}/bedgraph_genomecov", mode: "copy"
+  tag "${bamFile}"
   
   input:
   tuple val(bamID), file(bamFile)

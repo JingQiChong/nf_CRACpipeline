@@ -7,6 +7,7 @@ params.output_dir = "results"
 
 process sortBamfiles {
   publishDir "${params.output_dir}/aligned_bamsorted", mode: "copy"
+  tag "${alignedreadFile}"
   
   input:
   tuple val(alignedreadID), file(alignedreadFile)
