@@ -24,11 +24,11 @@ This workflow make use of various 3rd party tools especially tools from [pyCRAC 
 12. **pyPileup.py**: Make pileup tables of reads and deletions/mutations for a given genelist
 13. **pyCalcylateFDR**: Find peaks with false discovery rates on protein-coding genes
 
-##Installion 
+## Installation 
 Before running this pipeline, Nextflow first needs to be installed. Please follow the instruction [here](https://www.nextflow.io/) for installation.
 Please make sure you have all the required dependencies listed above installed before running. 
 
-##Quick start
+## Quick start
 To run this pipeline, use the command below
 ```
 nextflow run main.nf \
