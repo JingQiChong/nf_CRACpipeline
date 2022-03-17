@@ -19,7 +19,7 @@ include { RunPyPileup } from './subworkflows/RunPyPileup'
 include { RunPyCalculateFDRs } from './subworkflows/RunPyCalculateFDRs'
 
 //parameters
-params.input = ""
+params.reads = ""
 params.adapterfile = " "
 params.adapterpreset = " "
 params.barcode = " "
@@ -31,11 +31,17 @@ params.chromosome = " "
 params.genometab = " "
 params.genelist = " "
 params.output_dir = "results"
-read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
+
+//show help message
+if(params.help) {
+   include {HelpMessage} from './modules/help'
+   HelpMessage()
+   exit 0
+}
 
 //main workflow
 workflow {
-//   runs Flexbar on the data to remove the adapter sequence from the forward reads
+     read_ch = channel.fromPath(params.reads, checkIfExists: true ).map(file -> tuple(file.baseName, file))
      RunFlexBar(read_ch)
      DemultiplexSamples(RunFlexBar.out)
      RunFastQC(DemultiplexSamples.out)
