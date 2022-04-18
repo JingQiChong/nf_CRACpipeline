@@ -1,5 +1,4 @@
 # nf_CRACpipeline
-*This pipeline is still under development*
 
 ## Introduction
 nf_CRACpipeline is a nextflow workflow for processing and analyzing CRAC data.
