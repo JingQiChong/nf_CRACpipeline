@@ -19,16 +19,16 @@ This workflow make use of various 3rd party tools especially tools from [pyCRAC 
 8. **bedtools genomecov**: Generate bedgraph files from sorted indexed bam files
 9. **bedtools multicov**:  Counts reads to transcript features
 10. **pyReadcounter.py**: Quantify the number of reads that are overlapped to the genomic features
-11. **pyGTF2bedGraph**: Generate bedgraphs from gtf files
+11. **pyGTF2bedGraph.py**: Generate bedgraphs from gtf files
 12. **pyPileup.py**: Make pileup tables of reads and deletions/mutations for a given genelist
-13. **pyCalcylateFDR**: Find peaks with false discovery rates on protein-coding genes
+13. **pyCalculateFDR.py**: Find peaks with false discovery rates on protein-coding genes
 
 ## Installation 
 Before running this pipeline, Nextflow first needs to be installed. Please follow the instruction [here](https://www.nextflow.io/) for installation.
-Please make sure you have all the required dependencies listed above installed before running. 
+Please make sure you have all the required dependencies listed above installed before running the pipeline. 
 
 ## Quick start
-To run this pipeline, use the command below
+To run this pipeline, use the command below:
 ```
 nextflow run main.nf \
     --reads  reads.fastq \ 
@@ -42,7 +42,7 @@ nextflow run main.nf \
     --genometab  mygenome.tab 
 ```
 
-For more information on the arguments, simply run the command:
+For more information on the arguments of this pipeline, simply run the command:
 ``` nextflow run main.nf --help ```
 
   
