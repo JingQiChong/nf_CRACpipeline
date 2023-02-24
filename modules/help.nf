@@ -1,7 +1,7 @@
 //Help message for understanding the parameter
 
-def HelpMessage() {
-   log.info """
+def HelpMessage(){
+   log.info"""
     
    Hello! Below are the description of the arguments available for running in the nf_CRACpipeline: 
    

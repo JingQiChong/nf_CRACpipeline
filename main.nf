@@ -1,6 +1,13 @@
 //main.nf
 nextflow.enable.dsl=2
 
+//show help message
+if(params.help) {
+   include {HelpMessage} from './modules/help'
+   HelpMessage()
+   exit 0
+}
+
 //import subworkflows
 include { RunFlexBar } from './subworkflows/RunFlexBar'
 include { DemultiplexSamples } from './subworkflows/DemultiplexSamples'
@@ -18,26 +25,6 @@ include { MakeCoverageBedgraphFiles  } from './subworkflows/MakeCoverageBedgraph
 include { RunPyPileup } from './subworkflows/RunPyPileup'
 include { RunPyCalculateFDRs } from './subworkflows/RunPyCalculateFDRs'
 
-//parameters
-params.reads = ""
-params.adapterfile = " "
-params.adapterpreset = " "
-params.barcode = " "
-params.mismatches = 1
-params.novoindex = " "
-params.transcriptgff = " "
-params.gtf = " "
-params.chromosome = " "
-params.genometab = " "
-params.genelist = " "
-params.output_dir = "results"
-
-//show help message
-if(params.help) {
-   include {HelpMessage} from './modules/help'
-   HelpMessage()
-   exit 0
-}
 
 //main workflow
 workflow {

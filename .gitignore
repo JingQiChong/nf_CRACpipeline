@@ -1,5 +1,2 @@
 .nextflow*
-results/
-work/
-nextflow.config
-*.html
+test/
