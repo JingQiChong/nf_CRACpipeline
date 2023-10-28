@@ -1,18 +1,15 @@
-//process_demultiplexSamples
-nextflow.enable.dsl=2
+//process for demultiplexing the sample
 
-//parameters
-params.input = " "
-params.barcode = " "
-params.mismatches = 1
-params.output_dir = "results"
-
-process demultiplexSamples {
-  publishDir "${params.output_dir}/demultiplexed", mode: "copy"
-  tag "${read}"
+process pyBarcodeFilter{
+  tag "${readID}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/demultiplexed", 
+    mode: params.publish_dir_mode
+  ]
 
   input:
-  path read
+  tuple val(readID), file(readFile)
 
   output:
   path "*.fastq", emit: demultiplexed_reads
@@ -20,12 +17,6 @@ process demultiplexSamples {
 
   script:
   """
-  pyBarcodeFilter.py -f ${read} -b ${params.barcode} -m ${params.mismatches}
+  pyBarcodeFilter.py -f ${readFile} -b ${params.barcode} -m ${params.mismatches}
   """
-}
-
-workflow {
-  read_ch = channel.fromPath(params.input, checkIfExists: true )
-  demultiplexSamples(read_ch)
-  demultiplexSamples.out.demultiplexed_reads.view()
 }

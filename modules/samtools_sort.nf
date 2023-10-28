@@ -1,28 +1,21 @@
-//Process_sortBamFiles
-nextflow.enable.dsl=2
+//Process for running samtools sort and view
 
-//parameters
-params.input = " "
-params.output_dir = "results"
-
-process sortBamfiles {
-  publishDir "${params.output_dir}/aligned_bamsorted", mode: "copy"
-  tag "${alignedreadFile}"
+process samtools_sort{
+  tag "${alignment}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/alignment", 
+    mode: params.publish_dir_mode
+  ]
   
   input:
-  tuple val(alignedreadID), file(alignedreadFile)
+  tuple val(alignment), path(sam)
   
   output:
-  path "*.bam"
+  tuple val(alignment),path("*.bam"), emit: bam
   
   script:
   """
-  samtools view -b ${alignedreadFile} | samtools sort -@ 3 -O bam -o ${alignedreadID}.bam -T ./tmp -
+  samtools view -b ${sam} | samtools sort -@ 3 -O bam -o ${alignment}.bam -T ./tmp -
   """
-} 
-
-workflow {
-   aligned_reads = channel.fromPath(params.input, checkIfExists: true).map(file -> tuple(file.baseName, file))
-   sortBamfiles(aligned_reads)
-   sortBamfiles.out.view()
 }

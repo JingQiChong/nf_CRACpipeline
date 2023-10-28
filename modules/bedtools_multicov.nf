@@ -1,32 +1,22 @@
 //Process_runMultiCovTranscript
-nextflow.enable.dsl=2
-
-//parameters
-params.input = " "
-params.index = " "
-params.transcriptgff = " "
-params.output_dir = "results"
 
 process runMultiCovTranscript {
-  publishDir "${params.output_dir}/multicov_analyses", mode: "copy"
-  tag "${sortedbamfile}"
+   tag "${alignment}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/multicov_analyses", 
+    mode: params.publish_dir_mode
+  ]
   
   input:
-  path sortedbamfile
-  path bamfileindex
+  tuple val(alignment), path(bam)
+  tuple val(alignment), path(index)
   
   output:
   path "*.txt"
   
   script:
   """
-  bedtools multicov -s -bed ${params.transcriptgff} -bams ${sortedbamfile} >> allsample_transcriptcounts.txt
+  bedtools multicov -s -bed ${params.transcriptgff} -bams ${bam} >> allsample_transcriptcounts.txt
   """
-} 
-
-workflow {
-  sortedBamfiles = channel.fromPath(params.input, checkIfExists: true)
-  bamfileindex = channel.fromPath(params.index, checkIfExists: true) 
-  runMultiCovTranscript(sortedBamfiles, bamfileindex)
-  runMultiCovTranscript.out.view()
 }

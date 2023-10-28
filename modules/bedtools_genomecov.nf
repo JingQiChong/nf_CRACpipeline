@@ -1,30 +1,23 @@
-//Process_makeGenomeCoverageBedgraph
-nextflow.enable.dsl=2
+//Process to run bedtools genomecov
 
-//parameters
-params.input = " "
-params.output_dir = "results"
-
-process makeGenomeCoverageBedgraph {
-  publishDir "${params.output_dir}/bedgraph_genomecov", mode: "copy"
-  tag "${bamFile}"
+process bedtools_genomecov{
+  tag "${alignment}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/bedgraph_genomecov", 
+    mode: params.publish_dir_mode
+  ]
   
   input:
-  tuple val(bamID), file(bamFile)
+  tuple val(alignment), path(bam)
   
   output:
   path "*.bedgraph"
   
   script:
   """
-  bedtools genomecov -bg -strand + -ibam ${bamFile} > ${bamID}_plus.bedgraph
+  bedtools genomecov -bg -strand + -ibam ${bam} > ${alignment}_plus.bedgraph
   
-  bedtools genomecov -bg -strand - -ibam ${bamFile} > ${bamID}_minus.bedgraph
+  bedtools genomecov -bg -strand - -ibam ${bam} > ${alignment}_minus.bedgraph
   """
-} 
-
-workflow {
-  sortBamfiles = channel.fromPath(params.input, checkIfExists: true).map(file -> tuple(file.baseName, file))
-  makeGenomeCoverageBedgraph(sortBamfiles)
-  makeGenomeCoverageBedgraph.out.view()
 }

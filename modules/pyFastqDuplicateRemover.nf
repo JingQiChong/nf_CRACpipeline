@@ -1,29 +1,21 @@
-//Process_collapseDuplicates
-nextflow.enable.dsl=2
+//Process for removing fastq duplicates
 
-//parameters
-params.input = " "
-params.output_dir = "results"
+process pyFastqDuplicateRemover{
+  tag "${readID}"
   
-process collapseDuplicates {
-  publishDir "${params.output_dir}/collapsed", mode: "copy"
-  tag "${readFile}"
+  publishDir = [ 
+    path: "${params.outdir}/collapsed", 
+    mode: params.publish_dir_mode
+  ]
   
   input:
-  tuple val(readID), file(readFile)
+  tuple val(readID), path(readFile)
   
   output:
-  path "*.*"
+  tuple val(readID), path("*.fasta"), emit: collasped_read
   
   script:
   """
   pyFastqDuplicateRemover.py -f ${readFile} -o ${readID}.fasta
   """
-} 
-
-workflow {
-  demultiplexed_reads = channel.fromPath(params.input, checkIfExists: true ).flatMap(file -> file).view()
-  collapseDuplicates(demultiplexed_reads)
-  collapseDuplicates.out.view()
 }
-  

@@ -1,28 +1,21 @@
-//Process_sortBamFiles
-nextflow.enable.dsl=2
+//Process for running samtools index
 
-//parameters
-params.input = " "
-params.output_dir = "results"
-
-process indexBamfiles {
-  publishDir "${params.output_dir}/aligned_bamsorted", mode: "copy"
-  tag "${bamsorted}"
+process samtools_index{
+  tag "${alignment}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/alignment", 
+    mode: params.publish_dir_mode
+  ]
   
   input:
-  path bamsorted
+  tuple val(alignment), path(sam)
   
   output:
-  path "*.bam.bai"
+  tuple val(alignment),path("*.bai"), emit: index
   
   script:
   """
-  samtools index ${bamsorted}
+  samtools index ${sam}
   """
 } 
-
-workflow {
-   aligned_reads = channel.fromPath(params.input, checkIfExists: true)
-   indexBamfiles(aligned_reads)
-   indexBamfiles.out.view()
-}

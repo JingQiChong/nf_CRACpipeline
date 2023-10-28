@@ -1,23 +1,21 @@
-//process_runFlexbar.nf
-nextflow.enable.dsl=2
-
-//parameters
-params.input = ""
-params.adapterfile = " "
-params.adapterpreset = " "
-params.output_dir = "results"
+//process for running flexbar
 
 qflags = "-q TAIL -qf i1.8 -qt 30 --qtrim-post-removal"
 
-process runFlexBar {
-  publishDir "${params.output_dir}/flexbar_trimmed", mode: "copy"
-  tag "${readFile}"
+process flexbar {
+  tag "${readID}"
+  
+  publishDir = [ 
+    path: "${params.outdir}/flexbar_trimmed", 
+    mode: params.publish_dir_mode
+  ]
+  
   
   input:
   tuple val(readID), file(readFile)
   
   output:
-  path "*_trimmed.fastq"
+  tuple val(readID), path("*_trimmed.fastq"), emit: trimmed_read
 
   script:
   if( params.adapterfile != " ") {
@@ -37,11 +35,4 @@ process runFlexBar {
     flexbar -r ${readFile} --output-reads ${readID}_trimmed.fastq -n 10 ${qflags} -ao 5
     """
   }
-}
-
-
-workflow {
-  read_ch = channel.fromPath(params.input, checkIfExists: true ).map(file -> tuple(file.baseName, file))
-  runFlexBar(read_ch)
-  runFlexBar.out.view()
 }
