@@ -1,16 +1,16 @@
-//Process_runMultiCovTranscript
+//Process for running bedtools multicov
 
-process runMultiCovTranscript {
-   tag "${alignment}"
+process bedtools_multicov{
+   tag "allsamples"
   
   publishDir = [ 
-    path: "${params.outdir}/multicov_analyses", 
+    path: "${params.outdir}/bedtools_multicov", 
     mode: params.publish_dir_mode
   ]
   
   input:
-  tuple val(alignment), path(bam)
-  tuple val(alignment), path(index)
+  path(bam)
+  path(index)
   
   output:
   path "*.txt"

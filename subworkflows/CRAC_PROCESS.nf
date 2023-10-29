@@ -11,7 +11,7 @@ include {bamqc                  } from '../modules/bamqc'
 include {samtools_sort          } from '../modules/samtools_sort'
 include {samtools_index         } from '../modules/samtools_index'
 
-workflow DATA_PROCESS{
+workflow CRAC_PROCESS{
   take:
     read
     skip_demultiplex

@@ -1,7 +1,7 @@
-//process_runPileup
+//process for running pyPileup
 
-process runPyPileup {
-  tag "${alignedreadFile}"
+process pyPileup {
+  tag "${alignment}"
   
   publishDir = [ 
     path: "${params.outdir}/pyPileup", 
@@ -9,16 +9,16 @@ process runPyPileup {
   ]
   
   input:
-  tuple val(alignedreadID), file(alignedreadFile)
+  tuple val(alignment), file(bam)
   
   output:
-  path "*.*"
+  path "*.txt"
   
   when:
   params.genelist != null
   
   script:
   """
-  pyPileup.py -f ${alignedreadFile} -o ${alignedreadID}_pileups.txt --tab ${params.genometab} --gtf ${params.gtf} --file_type=sam -g ${params.genelist}
+  pyPileup.py -f ${bam} -o ${alignment}_pileups.txt --tab ${params.genometab} --gtf ${params.gtf} --file_type=sam -g ${params.genelist}
   """
 } 

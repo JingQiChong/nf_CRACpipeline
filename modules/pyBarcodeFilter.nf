@@ -3,9 +3,17 @@
 process pyBarcodeFilter{
   tag "${readID}"
   
-  publishDir = [ 
-    path: "${params.outdir}/demultiplexed", 
-    mode: params.publish_dir_mode
+  publishDir = [
+    [ 
+      path: "${params.outdir}/demultiplexed", 
+      mode: params.publish_dir_mode,
+      pattern: "*fastq"
+    ],
+    [ 
+      path: "${params.outdir}/demultiplexed/stats", 
+      mode: params.publish_dir_mode,
+      pattern: "*txt"
+    ]
   ]
 
   input:

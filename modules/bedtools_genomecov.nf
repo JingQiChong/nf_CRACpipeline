@@ -1,4 +1,4 @@
-//Process to run bedtools genomecov
+//process for running bedtools genomecov
 
 process bedtools_genomecov{
   tag "${alignment}"
