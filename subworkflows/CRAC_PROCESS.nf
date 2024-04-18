@@ -17,17 +17,19 @@ workflow CRAC_PROCESS{
     skip_demultiplex
   
   main:
-    flexbar(read)
+    adapter_ch = channel.fromPath(params.adapterfile, checkIfExists: true )
+    flexbar(read,adapter_ch)
     if (skip_demultiplex) {
       trimmed_ch = flexbar.out.trimmed_read
     } else{
-      pyBarcodeFilter(flexbar.out.trimmed_read)
+      barcode_ch = channel.fromPath(params.barcode, checkIfExists: true )
+      pyBarcodeFilter(flexbar.out.trimmed_read,barcode_ch)
       trimmed_ch = pyBarcodeFilter.out.demultiplexed_reads.flatten().map(file -> tuple(file.baseName, file))
     }
     fastqc(trimmed_ch)
     pyFastqDuplicateRemover(trimmed_ch)
     collapsed_ch = pyFastqDuplicateRemover.out
-    novoalign(collapsed_ch)
+    novoalign(collapsed_ch,params.novoindex)
     bamqc(novoalign.out.sam)
     samtools_sort(novoalign.out.sam)
     samtools_index(samtools_sort.out)

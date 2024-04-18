@@ -2,6 +2,7 @@
 
 process pyReadCounters {
   tag "${alignment}"
+  label 'process_medium'
   
   publishDir = [
     [
@@ -22,8 +23,19 @@ process pyReadCounters {
     
   ]
   
+  //Activate conda package 
+   if (params.enable_conda) {
+      conda 'bioconda::pycrac=1.5.2'    
+   }
+   
+   //Use singularity to pull singularity image
+   else if (workflow.containerEngine == 'singularity') {
+      container = 'https://depot.galaxyproject.org/singularity/pycrac:1.5.2--pyh7cba7a3_0'
+   }
+  
   input:
-  tuple val(alignment), file(bam)
+  tuple val(alignment), path(bam)
+  path gtf
   
   output:
   tuple val(alignment), path ("*.gtf"), emit: gtf
@@ -31,6 +43,6 @@ process pyReadCounters {
   
   script:
   """
-  pyReadCounters.py -f ${bam} --gtf ${params.gtf} -v --rpkm -o ${alignment} --file_type sam
+  pyReadCounters.py -f ${bam} --gtf ${gtf} -v --rpkm -o ${alignment} --file_type sam
   """
 }

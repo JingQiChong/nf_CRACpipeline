@@ -2,6 +2,7 @@
 
 process pyBarcodeFilter{
   tag "${readID}"
+  label 'process_medium'
   
   publishDir = [
     [ 
@@ -15,9 +16,20 @@ process pyBarcodeFilter{
       pattern: "*txt"
     ]
   ]
-
+  
+  //Activate conda package 
+   if (params.enable_conda) {
+      conda 'bioconda::pycrac=1.5.2'    
+   }
+   
+   //Use singularity to pull singularity image
+   else if (workflow.containerEngine == 'singularity') {
+      container = 'https://depot.galaxyproject.org/singularity/pycrac:1.5.2--pyh7cba7a3_0'
+   }
+   
   input:
-  tuple val(readID), file(readFile)
+  tuple val(readID), path(readFile)
+  path barcode
 
   output:
   path "*.fastq", emit: demultiplexed_reads
@@ -25,6 +37,6 @@ process pyBarcodeFilter{
 
   script:
   """
-  pyBarcodeFilter.py -f ${readFile} -b ${params.barcode} -m ${params.mismatches}
+  pyBarcodeFilter.py -f ${readFile} -b ${barcode} -m ${params.mismatches}
   """
 }

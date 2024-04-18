@@ -19,12 +19,12 @@ workflow CRAC_ANALYSIS{
      bedtools_genomecov(bam)
      allbam_ch = bam.map{id,file -> file}.collect()
      allbam_index_ch = bam_index.map{id,file -> file}.collect()
-     bedtools_multicov(allbam_ch, allbam_index_ch)
-     pyReadCounters(bam)
-     pyReadCountersBlocksNoMuts(bam)
-     pyGTF2bedGraph(pyReadCountersBlocksNoMuts.out.gtf)
-     pyPileup(bam)
-     pyCalculateFDRs(pyReadCounters.out.gtf)
+     bedtools_multicov(allbam_ch, allbam_index_ch, params.transcriptgff)
+     pyReadCounters(bam,params.gtf)
+     pyReadCountersBlocksNoMuts(bam,params.gtf)
+     pyGTF2bedGraph(pyReadCountersBlocksNoMuts.out.gtf,params.chromosome)
+     pyPileup(bam,params.genometab,params.gtf,params.genelist)
+     pyCalculateFDRs(pyReadCounters.out.gtf,params.chromosome,params.gtf)
   
   emit:
     cov = bedtools_genomecov.out
