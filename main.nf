@@ -12,7 +12,7 @@ if(params.help) {
 log.info"""
 
 ====================================================
-      DNA Methylation Array Designer (DMAD)
+      nf_CRACpipeline
 ====================================================
 Input/output options
   input                   : $params.reads
